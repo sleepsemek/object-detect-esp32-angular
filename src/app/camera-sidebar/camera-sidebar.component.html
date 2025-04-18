@@ -1,0 +1,14 @@
+<mat-accordion>
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Камеры</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-nav-list>
+      <mat-list-item *ngFor="let cam of cameras$ | async">
+        <h6 class="headline-5" (click)="select(cam.local_ip)">{{ cam.local_ip }}</h6>
+      </mat-list-item>
+    </mat-nav-list>
+
+  </mat-expansion-panel>
+</mat-accordion>

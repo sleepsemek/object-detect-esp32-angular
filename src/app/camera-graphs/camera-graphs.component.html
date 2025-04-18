@@ -1,0 +1,21 @@
+<mat-accordion>
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Люди за время</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-card *ngFor="let cam of cameraCharts; let last = last" [ngClass]="{ 'mb-2': !last }">
+      <mat-card-header>
+        <h6 class="headline-6 mb-3">{{ cam.local_ip }}</h6>
+      </mat-card-header>
+      <mat-card-content>
+        <canvas baseChart
+                [data]="cam.chartData"
+                [options]="chartOptions"
+                [type]="'line'"
+                height="50px">
+        </canvas>
+      </mat-card-content>
+    </mat-card>
+  </mat-expansion-panel>
+</mat-accordion>

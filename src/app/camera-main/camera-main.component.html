@@ -1,0 +1,20 @@
+<mat-accordion *ngIf="selectedIp">
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Трансляция с {{ selectedIp }}</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="camera-card">
+      <mat-spinner *ngIf="loading" diameter="40"></mat-spinner>
+      <video
+        *ngIf="selectedIp"
+        [src]="'http://' + selectedIp + '/stream'"
+        autoplay
+        muted
+        playsinline
+        (loadeddata)="onLoad()"
+        (error)="loading = false"
+      ></video>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

@@ -1,0 +1,32 @@
+/* heatmap.component.scss */
+.heatmap-container {
+  overflow-x: auto;
+
+  .heatmap-row {
+    display: flex;
+
+    .heatmap-cell {
+      width: 100%;
+      max-width: 100px;
+      aspect-ratio: 1 / 1;
+      border-radius: 4px;
+      margin: 1px;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+    }
+  }
+}
+
+.heatmap-tooltip {
+  white-space: pre-wrap;
+  font-family: 'Roboto', sans-serif;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+  max-width: 300px;
+}

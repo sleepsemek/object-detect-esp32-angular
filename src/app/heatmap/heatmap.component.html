@@ -1,0 +1,24 @@
+<!-- heatmap.component.html -->
+<mat-accordion>
+  <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Тепловая карта</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-card>
+      <mat-card-content>
+    <div class="heatmap-container">
+      <div class="heatmap-row" *ngFor="let time of timeIntervals">
+        <div class="heatmap-cell"
+             *ngFor="let camera of cameras"
+             [style.background-color]="getColorForCamera(time, camera)"
+             [matTooltip]="getTooltipText(time, camera)"
+             matTooltipClass="heatmap-tooltip">
+        </div>
+      </div>
+    </div>
+      </mat-card-content>
+    </mat-card>
+
+  </mat-expansion-panel>
+</mat-accordion>

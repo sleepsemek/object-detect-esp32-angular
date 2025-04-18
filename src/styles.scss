@@ -1,0 +1,103 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$font-family: 'Roboto', sans-serif;
+$headline-1: (
+  font-size: 2rem,
+  line-height: 2.5rem,
+  font-weight: 500
+);
+$headline-2: (
+  font-size: 1.8rem,
+  line-height: 2.2rem,
+  font-weight: 500
+);
+$headline-3: (
+  font-size: 1.5rem,
+  line-height: 2rem,
+  font-weight: 500
+);
+$headline-4: (
+  font-size: 1.2rem,
+  line-height: 1.8rem,
+  font-weight: 500
+);
+$headline-5: (
+  font-size: 1rem,
+  line-height: 1.4rem,
+  font-weight: 400
+);
+$headline-6: (
+  font-size: 0.8rem,
+  line-height: 1.2rem,
+  font-weight: 300
+);
+
+@mixin apply-typography($level) {
+  font-family: $font-family;
+  font-size: map-get($level, font-size);
+  line-height: map-get($level, line-height);
+  font-weight: map-get($level, font-weight);
+  margin: 0;
+}
+
+.headline-1 {
+  @include apply-typography($headline-1);
+}
+
+.headline-2 {
+  @include apply-typography($headline-2);
+}
+
+.headline-3 {
+  @include apply-typography($headline-3);
+}
+
+.headline-4 {
+  @include apply-typography($headline-4);
+}
+
+.headline-5 {
+  @include apply-typography($headline-5);
+}
+
+.headline-6 {
+  @include apply-typography($headline-6);
+}
+
+mat-panel-title {
+  @extend .headline-4;
+  .mat-expansion-panel-header & {
+    font-size: 1.2rem !important;
+    font-weight: 500 !important;
+  }
+}
+
+mat-list-item {
+  margin-bottom: 2px !important;
+}
+
+.mat-expansion-panel-body {
+  padding-bottom: 24px !important;
+}
+
+body {
+  font-family: $font-family;
+  background: var(--mat-sys-surface-container-lowest);
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+}
+
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      theme-type: dark,
+    ),
+    typography: (
+      plain-family: Roboto,
+    ),
+    density: 0
+  ));
+}
