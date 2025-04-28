@@ -6,15 +6,16 @@
 
     <div class="camera-card">
       <mat-spinner *ngIf="loading" diameter="40"></mat-spinner>
-      <video
+      <img
+        class="stream"
+        #streamImage
         *ngIf="selectedIp"
         [src]="'http://' + selectedIp + '/stream'"
-        autoplay
-        muted
-        playsinline
-        (loadeddata)="onLoad()"
+        (load)="onLoad()"
         (error)="loading = false"
-      ></video>
+        [hidden]="loading"
+        alt="stream from camera"
+      />
     </div>
   </mat-expansion-panel>
 </mat-accordion>

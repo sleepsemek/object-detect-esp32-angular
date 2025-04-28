@@ -39,6 +39,8 @@ app.post('/api/postResult', (req, res) => {
 
   inferenceStore[local_ip].push(newInference);
 
+  console.log(newInference);
+
   const now = Date.now();
   const oneDayMs = 24 * 60 * 60 * 1000;
 

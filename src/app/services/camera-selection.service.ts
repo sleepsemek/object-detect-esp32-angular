@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class CameraSelectionService {
-  private selectedIpSubject = new BehaviorSubject<string | null>(null);
+  selectedIpSubject = new BehaviorSubject<string | null>(null);
   selectedIp$ = this.selectedIpSubject.asObservable();
 
   selectCamera(ip: string) {

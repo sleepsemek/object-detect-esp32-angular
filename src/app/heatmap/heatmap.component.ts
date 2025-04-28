@@ -94,7 +94,7 @@ export class HeatmapComponent implements OnInit, OnDestroy {
     }, new Set<number>());
 
     const sortedIntervals = Array.from(allIntervals).sort((a, b) => a - b);
-    const keepIntervals = new Set(sortedIntervals.slice(-10));
+    const keepIntervals = new Set(sortedIntervals.slice(-this.cameras.length));
 
     this.cameras.forEach(camera => {
       Array.from(camera.intervals.keys()).forEach(ts => {

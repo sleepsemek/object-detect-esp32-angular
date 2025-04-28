@@ -74,9 +74,29 @@ mat-panel-title {
   }
 }
 
+.mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
+
 mat-list-item {
   margin-bottom: 2px !important;
 }
+
+mat-form-field {
+  margin-bottom: 4px !important;
+}
+
+.mat-mdc-menu-panel {
+  border-radius: 12px !important;
+}
+
+.mat-mdc-menu-content {
+  padding: 24px !important;
+}
+
+//.cdk-overlay-pane {
+//  max-height: none !important;
+//}
 
 .mat-expansion-panel-body {
   padding-bottom: 24px !important;

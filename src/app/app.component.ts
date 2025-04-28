@@ -7,6 +7,8 @@ import { CameraSidebarComponent } from './camera-sidebar/camera-sidebar.componen
 import { CommonModule } from '@angular/common';
 import {CameraGraphsComponent} from './camera-graphs/camera-graphs.component';
 import {HeatmapComponent} from './heatmap/heatmap.component';
+import {MatMenu, MatMenuTrigger} from '@angular/material/menu';
+import {CameraSettingsComponent} from './camera-settings/camera-settings.component';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +21,10 @@ import {HeatmapComponent} from './heatmap/heatmap.component';
     CameraMainComponent,
     CameraSidebarComponent,
     CameraGraphsComponent,
-    HeatmapComponent
+    HeatmapComponent,
+    MatMenu,
+    CameraSettingsComponent,
+    MatMenuTrigger
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
