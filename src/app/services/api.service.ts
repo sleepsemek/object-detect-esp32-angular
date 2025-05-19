@@ -5,7 +5,10 @@ import { switchMap, tap } from 'rxjs/operators';
 
 export interface InferenceData {
   timestamp: string;
-  data: Record<string, number[][]>;
+  data: {
+    person?: number[][];
+    [key: string]: number[][] | undefined;
+  };
 }
 
 export interface CameraInference {

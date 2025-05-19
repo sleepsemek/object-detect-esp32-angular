@@ -4,11 +4,11 @@
       <mat-panel-title>Трансляция с {{ selectedIp }}</mat-panel-title>
     </mat-expansion-panel-header>
 
-    <div class="camera-card">
+    <div class="camera-card" style="position: relative;">
       <mat-spinner *ngIf="loading" diameter="40"></mat-spinner>
       <img
-        class="stream"
         #streamImage
+        class="stream"
         *ngIf="selectedIp"
         [src]="'http://' + selectedIp + '/stream'"
         (load)="onLoad()"
@@ -16,6 +16,13 @@
         [hidden]="loading"
         alt="stream from camera"
       />
+
+      <canvas
+        #overlayCanvas
+        class="overlay"
+        [hidden]="loading"
+        style="position: absolute; top: 0; left: 0; pointer-events: none;"
+      ></canvas>
     </div>
   </mat-expansion-panel>
 </mat-accordion>

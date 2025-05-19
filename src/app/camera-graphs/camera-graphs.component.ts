@@ -1,11 +1,12 @@
+// Импорты остаются без изменений
 import { Component, OnDestroy, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { BaseChartDirective } from "ng2-charts";
-import {ChartConfiguration} from 'chart.js';
+import { ChartConfiguration } from 'chart.js';
 import { Subscription } from 'rxjs';
 import { ApiService, CameraInference, InferenceData } from '../services/api.service';
-import {MatAccordion, MatExpansionPanel, MatExpansionPanelTitle, MatExpansionPanelHeader} from '@angular/material/expansion';
-import {MatCard, MatCardContent, MatCardHeader} from '@angular/material/card';
-import {NgClass, NgForOf} from '@angular/common';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelTitle, MatExpansionPanelHeader } from '@angular/material/expansion';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
+import { NgClass, NgForOf } from '@angular/common';
 
 @Component({
   selector: 'app-camera-graphs',
@@ -83,14 +84,6 @@ export class CameraGraphsComponent implements OnInit, OnDestroy {
 
     newInferences.forEach(inf => {
       chart.chartData.labels.push(this.formatTime(inf.timestamp));
-      // значения до 10
-      // if (chart.chartData.labels.length > 10) {
-      //   chart.chartData.labels.splice(0, chart.chartData.labels.length - 10);
-      //   chart.chartData.datasets.forEach((dataset : ChartDataset) => {
-      //     dataset.data.splice(0, dataset.data.length - 10);
-      //   });
-      // }
-
       this.updateDatasets(chart.chartData.datasets, inf);
     });
 
@@ -103,30 +96,34 @@ export class CameraGraphsComponent implements OnInit, OnDestroy {
     const datasets = new Map<string, number[]>();
 
     inferences.forEach(inf => {
-      Object.entries(inf.data).forEach(([label, people]) => { // people
-        if (!datasets.has(label)) datasets.set(label, []);
-        datasets.get(label)!.push(people.length);
-      });
+      for (const key in inf.data) {
+        const group = inf.data[key];
+        if (!group) continue;
+
+        if (!datasets.has(key)) datasets.set(key, []);
+        datasets.get(key)!.push(group.length);
+      }
     });
 
     return Array.from(datasets.entries()).map(([label, data]) => ({ label, data }));
   }
 
   private updateDatasets(datasets: any[], inference: InferenceData): void {
-    Object.entries(inference.data).forEach(([label, people]) => {
-      const dataset = datasets.find(d => d.label === label);
-      const count = people.length;
+    for (const key in inference.data) {
+      const group = inference.data[key];
+      if (!group) continue;
+
+      const count = group.length;
+      const dataset = datasets.find(d => d.label === key);
 
       if (dataset) {
         dataset.data.push(count);
       } else {
-        const newData = [
-          ...new Array(datasets[0]?.data.length - 1).fill(null),
-          count
-        ];
-        datasets.push({ label, data: newData });
+        const fillLength = datasets[0]?.data.length ?? 0;
+        const newData = [...new Array(fillLength - 1).fill(null), count];
+        datasets.push({ label: key, data: newData });
       }
-    });
+    }
   }
 
   private formatTime(timestamp: string): string {

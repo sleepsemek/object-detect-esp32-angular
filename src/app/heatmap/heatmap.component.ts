@@ -74,9 +74,19 @@ export class HeatmapComponent implements OnInit, OnDestroy {
         const timestamp = this.roundToInterval(new Date(inf.timestamp));
 
         if (!camera.processedTimestamps.has(rawTimestamp)) {
-          const peopleCount = Object.values(inf.data).reduce((sum, detections) => sum + detections.length, 0);
+          let totalCount = 0;
 
-          camera.intervals.set(timestamp, (camera.intervals.get(timestamp) || 0) + peopleCount);
+          for (const key in inf.data) {
+            const group = inf.data[key];
+            if (group) {
+              totalCount += group.length;
+            }
+          }
+
+          camera.intervals.set(
+            timestamp,
+            (camera.intervals.get(timestamp) || 0) + totalCount
+          );
           camera.processedTimestamps.add(rawTimestamp);
         }
       });
@@ -86,6 +96,7 @@ export class HeatmapComponent implements OnInit, OnDestroy {
 
     this.cleanupOldData();
   }
+
 
   private cleanupOldData(): void {
     const allIntervals = this.cameras.reduce((acc, camera) => {
