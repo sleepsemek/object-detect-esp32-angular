@@ -33,6 +33,9 @@ export class CameraMainComponent implements OnDestroy, AfterViewInit {
   private sub = new Subscription();
   private clearTimeoutId: any | null = null;
 
+  private cvNaturalH = 0;
+  private cvNaturalW = 0;
+
   @ViewChild('streamImage') streamImage?: ElementRef<HTMLImageElement>;
   @ViewChild('overlayCanvas') overlayCanvas?: ElementRef<HTMLCanvasElement>;
 
@@ -94,43 +97,40 @@ export class CameraMainComponent implements OnDestroy, AfterViewInit {
     if (!imgEl || !cvEl) return;
     cvEl.width = imgEl.clientWidth;
     cvEl.height = imgEl.clientHeight;
+
+    this.cvNaturalH = imgEl.naturalHeight;
+    this.cvNaturalW = imgEl.naturalWidth;
   }
 
   private showCircles(camInf: CameraInference) {
-    // Отменяем предыдущий таймаут
     if (this.clearTimeoutId) {
       clearTimeout(this.clearTimeoutId);
       this.clearTimeoutId = null;
     }
 
-    // Очистка и ресайз перед рисованием
     this.clearOverlay();
 
     const cvEl = this.overlayCanvas?.nativeElement;
     const ctx = cvEl?.getContext('2d');
     if (!cvEl || !ctx) return;
 
-    // Находим самый свежий инференс
     const latest = camInf.inferences.reduce((prev, curr) =>
       new Date(curr.timestamp).getTime() > new Date(prev.timestamp).getTime()
         ? curr
         : prev
     );
 
-    // Синхронизируем размер канваса с картинкой
     this.resizeCanvas();
 
-    // Коэффициенты масштабирования из условных единиц в пиксели
-    // (берём из первого p любые frameW/frameH — они одинаковы для всех точек)
-    const scaleX = 2; // фиксированный коэффициент по X
-    const scaleY = 2; // фиксированный коэффициент по Y
+    const scaleX = cvEl.clientWidth / this.cvNaturalW;
+    const scaleY = cvEl.clientHeight / this.cvNaturalH;
 
-    // Рисуем кружки в новых координатах
     (latest.data.person || []).forEach(p => {
       const [, x, y] = p;
       const cx = x * scaleX;
       const cy = y * scaleY;
-      const radius = 20;  // в пикселях, можно тоже масштабировать, если нужно
+
+      const radius = 40;
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       ctx.lineWidth = 3;
@@ -138,11 +138,10 @@ export class CameraMainComponent implements OnDestroy, AfterViewInit {
       ctx.stroke();
     });
 
-    // Запускаем очистку через 2 сек
     this.clearTimeoutId = setTimeout(() => {
       this.clearOverlay();
       this.clearTimeoutId = null;
-    }, 2000);
+    }, 600);
   }
 
   private clearOverlay() {

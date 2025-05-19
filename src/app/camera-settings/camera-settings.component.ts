@@ -42,7 +42,7 @@ export class CameraSettingsComponent {
   settings: WritableSignal<Partial<Record<CameraSettingKey, number>>> = signal({});
 
   options = {
-    framesize: [4, 5, 6, 7, 8, 9, 10, 11, 12],
+    framesize: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     brightness: [-2, -1, 0, 1, 2],
     contrast: [-2, -1, 0, 1, 2],
     saturation: [-2, -1, 0, 1, 2],
@@ -66,6 +66,9 @@ export class CameraSettingsComponent {
   keys = Object.keys(this.options) as CameraSettingKey[];
 
   frameSizeLabels: { [key: number]: string } = {
+    1: 'QQVGA 160X120',
+    2: '176X144',
+    3: '240X176',
     4: '240x240',
     5: 'QVGA 320x240',
     6: '400x296',
