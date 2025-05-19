@@ -43,15 +43,15 @@ export class CameraSettingsComponent {
 
   options = {
     framesize: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    special_effect: [0, 1, 2, 3, 4, 5, 6],
+    wb_mode: [0, 1, 2, 3, 4],
     brightness: [-2, -1, 0, 1, 2],
     contrast: [-2, -1, 0, 1, 2],
     saturation: [-2, -1, 0, 1, 2],
-    special_effect: [0, 1, 2, 3, 4, 5, 6],
     ae_level: [-2, -1, 0, 1, 2],
     aec_value: [0, 150, 300, 600, 900, 1200],
     agc_gain: [0, 5, 10, 15, 20, 25, 30],
     gain_ceiling: [0, 1, 2, 3, 4, 5, 6],
-    wb_mode: [0, 1, 2, 3, 4],
     awb: [0, 1],
     awb_gain: [0, 1],
     aec2: [0, 1],
@@ -80,6 +80,39 @@ export class CameraSettingsComponent {
     12: 'SXGA 1280x1024'
   };
 
+  specialEffectLabels: { [key: number]: string } = {
+    0: 'Обычный',
+    1: 'Негативный',
+    2: 'ЧБ',
+    3: 'Красный',
+    4: 'Зеленый',
+    5: 'Синий',
+    6: 'Мексиканский',
+  }
+
+  whiteBalanceLabels: { [key: number]: string } = {
+    0: 'Авто',
+    1: 'Солнечный',
+    2: 'Облачный',
+    3: 'Офис',
+    4: 'Дом',
+  }
+
+  selectFields = [
+    { key: 'framesize', labels: this.frameSizeLabels },
+    { key: 'special_effect', labels: this.specialEffectLabels },
+    { key: 'wb_mode', labels: this.whiteBalanceLabels }
+  ];
+
+  isToggle(key: CameraSettingKey): boolean {
+    const opts = this.options[key];
+    return opts.length === 2 && opts.includes(0) && opts.includes(1);
+  }
+
+  isSlider(key: CameraSettingKey): boolean {
+    return !this.isToggle(key) && !this.selectFields.some(field => field.key === key);
+  }
+
   getMin(key: CameraSettingKey): number {
     const values = this.options[key];
     return Math.min(...values);
@@ -96,11 +129,6 @@ export class CameraSettingsComponent {
     const steps = values.slice(1).map((v, i) => v - values[i]);
     const minStep = Math.min(...steps.filter(step => step > 0));
     return minStep || 1;
-  }
-
-  isToggle(key: CameraSettingKey): boolean {
-    const opts = this.options[key];
-    return opts.length === 2 && opts.includes(0) && opts.includes(1);
   }
 
   constructor(

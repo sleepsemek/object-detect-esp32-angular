@@ -12,20 +12,18 @@
       ></mat-slide-toggle>
     </div>
 
-    <mat-form-field
-      *ngIf="key === 'framesize'"
-      appearance="fill"
-      class="w-100 my-2"
-    >
-      <mat-label>{{ key | prettyKey }}</mat-label>
-      <mat-select [value]="settings()[key]" (selectionChange)="setOption(key, $event.value)">
-        <mat-option *ngFor="let val of options[key]" [value]="val">
-          {{ frameSizeLabels[val] }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <ng-container *ngFor="let field of selectFields">
+      <mat-form-field *ngIf="key === field.key" appearance="fill" class="w-100 my-2">
+        <mat-label>{{ key | prettyKey }}</mat-label>
+        <mat-select [value]="settings()[key]" (selectionChange)="setOption(key, $event.value)">
+          <mat-option *ngFor="let val of options[key]" [value]="val">
+            {{ field.labels[val] }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
 
-    <div *ngIf="!isToggle(key) && key !== 'framesize'" class="w-100">
+    <div *ngIf="isSlider(key)">
       <div class="w-100">
         <label>{{ key | prettyKey }}</label>
       </div>
