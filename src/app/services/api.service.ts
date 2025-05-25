@@ -44,48 +44,69 @@ export class ApiService {
     ).subscribe();
   }
 
-  // private mergeResults(newResults: CameraInference[]): CameraInference[] {
-  //   return newResults.map(newCam => {
-  //     const existingCam = this.cameraInferenceSubject.value.find(c => c.address === newCam.address);
-  //     return existingCam
-  //       ? { ...newCam, inferences: this.mergeInferences(existingCam.inferences, newCam.inferences) }
-  //       : newCam;
-  //   });
-  // }
-
   private mergeResults(newResults: CameraInference[]): CameraInference[] {
-    return newResults.map(newCam => {
-      const existingCam = this.cameraInferenceSubject.value.find(c => c.local_ip === newCam.local_ip);
+    const existing = this.cameraInferenceSubject.value;
+
+    const updatedMap = new Map<string, CameraInference>();
+
+    newResults.forEach(newCam => {
+      const existingCam = existing.find(c => c.local_ip === newCam.local_ip);
       const mergedInferences = existingCam
         ? this.mergeInferences(existingCam.inferences, newCam.inferences)
         : newCam.inferences;
 
       const withZeros = this.fillMissingTimestamps(newCam.local_ip, mergedInferences);
 
-      return {
+      updatedMap.set(newCam.local_ip, {
         local_ip: newCam.local_ip,
         inferences: withZeros
-      };
+      });
     });
+
+    existing.forEach(oldCam => {
+      if (!updatedMap.has(oldCam.local_ip)) {
+        const filled = this.fillMissingTimestamps(oldCam.local_ip, oldCam.inferences);
+        updatedMap.set(oldCam.local_ip, {
+          local_ip: oldCam.local_ip,
+          inferences: filled
+        });
+      }
+    });
+
+    return Array.from(updatedMap.values());
   }
+
 
   private fillMissingTimestamps(local_ip: string, inferences: InferenceData[]): InferenceData[] {
     const now = Date.now();
-    const oneDayAgo = now - 1 * 60 * 60 * 1000;
-    const interval = 5000; // 5 секунд
+    const startingTimeInterval = now - 1800 * 1000;
+    const interval = 10000;
 
     const sorted = [...inferences].sort((a, b) =>
       new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );
 
     const filled: InferenceData[] = [];
-    for(let i = 0; i < sorted.length; i++) {
-      const current = new Date(sorted[i].timestamp).getTime();
-      const prev = i > 0 ? new Date(sorted[i-1]?.timestamp).getTime() : null;
 
-      if(prev && (current - prev > interval)) {
+    const firstTime = sorted.length > 0
+      ? new Date(sorted[0].timestamp).getTime()
+      : now;
+
+    if (firstTime - startingTimeInterval > interval) {
+      const missingStartSteps = Math.floor((firstTime - startingTimeInterval) / interval);
+      for (let j = 0; j < missingStartSteps; j++) {
+        const missingTime = new Date(startingTimeInterval + j * interval);
+        filled.push(this.createZeroEntry(missingTime));
+      }
+    }
+
+    for (let i = 0; i < sorted.length; i++) {
+      const current = new Date(sorted[i].timestamp).getTime();
+      const prev = i > 0 ? new Date(sorted[i - 1]?.timestamp).getTime() : null;
+
+      if (prev && current - prev > interval) {
         const missingSteps = Math.floor((current - prev) / interval) - 1;
-        for(let j = 1; j <= missingSteps; j++) {
+        for (let j = 1; j <= missingSteps; j++) {
           const missingTime = new Date(prev + j * interval);
           filled.push(this.createZeroEntry(missingTime));
         }
@@ -96,22 +117,21 @@ export class ApiService {
 
     const lastTime = sorted.length > 0
       ? new Date(sorted[sorted.length - 1].timestamp).getTime()
-      : oneDayAgo;
+      : now;
 
     const missingEndSteps = Math.floor((now - lastTime) / interval);
-    for(let j = 1; j <= missingEndSteps; j++) {
+    for (let j = 1; j <= missingEndSteps; j++) {
       const missingTime = new Date(lastTime + j * interval);
       filled.push(this.createZeroEntry(missingTime));
     }
 
     return filled
-      .filter(inf => new Date(inf.timestamp).getTime() >= oneDayAgo)
+      .filter(inf => new Date(inf.timestamp).getTime() >= startingTimeInterval)
       .filter((inf, index, self) =>
-          index === self.findIndex(t =>
-            t.timestamp === inf.timestamp
-          )
+        index === self.findIndex(t => t.timestamp === inf.timestamp)
       );
   }
+
 
   private createZeroEntry(timestamp: Date): InferenceData {
     return {

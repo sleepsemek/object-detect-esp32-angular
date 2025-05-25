@@ -141,7 +141,7 @@ export class CameraMainComponent implements OnDestroy, AfterViewInit {
     this.clearTimeoutId = setTimeout(() => {
       this.clearOverlay();
       this.clearTimeoutId = null;
-    }, 600);
+    }, 1000);
   }
 
   private clearOverlay() {
